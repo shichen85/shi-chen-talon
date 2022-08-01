@@ -1,4 +1,5 @@
 import re
+from difflib import SequenceMatcher
 
 from talon import Context, Module, actions, ui
 
@@ -66,9 +67,12 @@ class Actions:
         return actions.user.switcher_focus_window(scored_instances[0][1])
 
 
-def _string_to_words(string: str) -> list[str]:
+def _string_to_normalized_words(string: str) -> list[str]:
     """
-    Convert a string to a matchable object.
+    Convert a string to a normalized collection of
+    "words". Breaks on spaces, punctuation, and
+    lower-to-upper case changes. All words are forced
+    lower case.
     """
     clean = re.sub(r'[^a-zA-Z0-9]+', ' ', string)
     # Wherever a lowercase bumps against an uppercase, split there too
@@ -76,37 +80,41 @@ def _string_to_words(string: str) -> list[str]:
     # Wherever numbers bump against letters, split there too
     clean = re.sub(r'([a-zA-Z])([0-9])', r'\1 \2', clean)
     clean = re.sub(r'([0-9])([a-zA-Z])', r'\1 \2', clean)
-    words = [word.lower() for word in re.split(r'\s+', clean) if word]
+    words = [word.lower() for word in re.split(r'\s+', clean.strip()) if word]
     return words
 
 
 def _word_match_score(word1: str, word2: str) -> int:
     """
-    Score a word match.
+    Score a word match. Max is 1 (perfect match) and
+    min is 0 (very dissimilar). Intent is to reflect
+    similarity in how the words *sound*, but don't want
+    to do a lot of heavy lifting or rely on 3rd party
+    libraries. Expect scores to change with updates!
     """
     if(not word1 or not word2):
         return 0
     if word1 == word2:
-        return 10
-    if word1.startswith(word2) or word2.startswith(word1):
-        return 5
-    if word1[0] == word2[0]:
-        return 0.5
-    return 0
+        return 1
+    return SequenceMatcher(None, word1, word2).ratio()
 
 
 def _phrase_match_score(phrase1: str, phrase2: str) -> int:
     """
-    Score a phrase match.
+    Score a phrase match, assuming order of words does not
+    matter. Expect scores to change with updates!
     """
     if(not phrase1 or not phrase2):
         return 0
-    words1 = _string_to_words(phrase1)
-    words2 = _string_to_words(phrase2)
+    words1 = _string_to_normalized_words(phrase1)
+    words2 = _string_to_normalized_words(phrase2)
     if(not words1 or not words2):
         return 0
     score = 0
     for word1 in words1:
+        best_score = 0
         for word2 in words2:
+            best_score = max(best_score, _word_match_score(word1, word2))
             score += _word_match_score(word1, word2)
+        score += best_score
     return score
