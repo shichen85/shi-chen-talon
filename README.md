@@ -48,6 +48,24 @@ Open up GitHub Desktop and then:
 5. Paste `%APPDATA%\talon\user` into the address bar and click <kbd>Select Folder</kbd>
 6. Click <kbd>Clone</kbd>
 
+## Features
+
+This section provides information and tips about some of the features provided by this collection of Talon scripts. Assume that it isn't fully up to date and is non-comprehensive.
+
+### Focus a window by app and title
+
+> 💬 `focus <user.running_applications> [<user.text>]`
+
+This command replaces the `knausj_talon` script `focus <user.running_applications>`, so that you can specify *which* window, by title, in cases where you have multiple windows open for a given application.
+
+If the optional title text is not provided, the command falls back on the `knausj_talon` script's default behavior.
+
+This command performs fuzzy matching for titles. It scores all windows and returns the one with the highest score, so you can pull up a window even if you were quite inaccurate in specifying its title (but you may also get a window you didn't expect).
+
+- 💡 You can rename your Chrome windows to whatever you please, so that the title for a given window stops changing based on which tab is currently active. **⚠️ Warning ⚠ renaming Chrome windows will break your website-specific Talon scripts, since they use the window title to determine context.**
+- 💡 You can change how Visual Studio Code names its windows, at the user and workspace levels, using the `window.title` setting.
+- 💡 Try to name things so that they're easy to group. For example, I have a Chrome window named `talon` and a VSCode window that includes the word "talon" in its title, so that I can say `focus chrome talon` or `focus vscode talon` to go to the right app for things related to working on Talon.
+
 ## Extending/changing functionality
 
 Talon automatically loads any `.talon` or `.py` files it finds inside of the `%APPDATA%\talon\user` folder (nesting is allowed), so you can add or change functionality by editing, changing, or deleting files in that folder.
