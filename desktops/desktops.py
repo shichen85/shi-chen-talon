@@ -34,37 +34,27 @@ class Actions:
                 actions.key("ctrl-win-right")
 
     def focus_app_by_title(app_name: str, title_search: str) -> None:
-        if not title_search:
-            return actions.user.switcher_focus(app_name)
-        # For some reason we have to separately get
-        # the list of apps that are actually focus-able.
-        # Just need the PIDs for filtering later.
-        focusable_pids = [
-            focusable_app.pid for focusable_app in ui.apps(background=False)]
+        # See which app it is using knausj behavior
+        # (throws if none found)
+        matching_app: ui.App = actions.user.get_running_app(app_name)
 
-        # Get all of the focusable active processes
-        # that have titles
-        instances = [instance for instance in ui.windows(
-        ) if instance.app.pid in focusable_pids and instance.title]
+        # Get the windows associated with the app
+        windows = matching_app.windows()
 
-        # Score all  focusable, active processes that have titles
-        scored_instances = []
-        for instance in instances:
-            if (instance.app.pid not in focusable_pids) or not instance.title:
-                continue
-            # Must match the app name! (Boost the score)
-            score = _phrase_match_score(instance.app.name, app_name) * 2
-            if score == 0:
-                continue
-            # Add more points for a title match
-            score += _phrase_match_score(instance.title, title_search)
-            scored_instances.append((score, instance))
-        # Sort by score
-        if not len(scored_instances):
-            raise RuntimeError(
-                f"Can't find apps matching app name '{app_name}' and title search '{title_search}'")
-        scored_instances.sort(key=lambda x: x[0], reverse=True)
-        return actions.user.switcher_focus_window(scored_instances[0][1])
+        # Default to knausj behavior if no title provided
+        # or no choicese to be made
+        if not title_search or len(windows) < 2:
+            return actions.user.switcher_focus_app(matching_app)
+
+        # Find the window with the closest title match
+        scored_windows = []
+        for window in windows:
+            window.title
+            score = _phrase_match_score(window.title, title_search)
+            scored_windows.append((score, window))
+
+        scored_windows.sort(key=lambda x: x[0], reverse=True)
+        return actions.user.switcher_focus_window(scored_windows[0][1])
 
 
 def _string_to_normalized_words(string: str) -> list[str]:
@@ -115,6 +105,5 @@ def _phrase_match_score(phrase1: str, phrase2: str) -> int:
         best_score = 0
         for word2 in words2:
             best_score = max(best_score, _word_match_score(word1, word2))
-            score += _word_match_score(word1, word2)
         score += best_score
     return score
