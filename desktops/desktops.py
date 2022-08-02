@@ -33,7 +33,7 @@ class Actions:
             for i in range(1, number):
                 actions.key("ctrl-win-right")
 
-    def focus_app_by_title(app_name: str, title_search: str) -> None:
+    def focus_app_by_title(app_name: str, title_search: str = '') -> None:
         # See which app it is using knausj behavior
         # (throws if none found)
         matching_app: ui.App = actions.user.get_running_app(app_name)
@@ -44,13 +44,15 @@ class Actions:
         # Default to knausj behavior if no title provided
         # or no choicese to be made
         if not title_search or len(windows) < 2:
+            print("Only one window found for", matching_app.name)
             return actions.user.switcher_focus_app(matching_app)
 
         # Find the window with the closest title match
         scored_windows = []
         for window in windows:
-            window.title
             score = _phrase_match_score(window.title, title_search)
+            print("FOCUS APP BY TITLE SCORE: App", matching_app.name, "| search", title_search, "| window",
+                  window.title, "| score", score)
             scored_windows.append((score, window))
 
         scored_windows.sort(key=lambda x: x[0], reverse=True)
@@ -100,10 +102,14 @@ def _phrase_match_score(phrase1: str, phrase2: str) -> int:
     words2 = _string_to_normalized_words(phrase2)
     if(not words1 or not words2):
         return 0
-    score = 0
+    best_scores = []
     for word1 in words1:
         best_score = 0
         for word2 in words2:
-            best_score = max(best_score, _word_match_score(word1, word2))
-        score += best_score
-    return score
+            match_score = _word_match_score(word1, word2)
+            best_score = max(best_score, match_score)
+        best_scores.append(best_score)
+
+    # Add up the top<min(len(words1), len(words2))> scores
+    best_scores.sort(reverse=True)
+    return sum(best_scores[:min(len(words1), len(words2))])
