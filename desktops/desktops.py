@@ -18,7 +18,7 @@ os: windows
 
 
 @mod.action_class
-class Actions:
+class ModActions:
     def focus_app_by_title(app_name: str, title_search: str) -> None:
         """Focus application by title, with a search"""
 
@@ -76,7 +76,7 @@ def _string_to_normalized_words(string: str) -> list[str]:
     return words
 
 
-def _word_match_score(word1: str, word2: str) -> int:
+def _word_match_score(word1: str, word2: str) -> float:
     """
     Score a word match. Max is 1 (perfect match) and
     min is 0 (very dissimilar). Intent is to reflect

@@ -1,6 +1,6 @@
 app: github_desktop
 -
-open [repo]:
+repo (open|editor):
   key(ctrl-shift-a)
   
 git pull:
@@ -9,20 +9,17 @@ git pull:
 git push:
   key(ctrl-p)
 
-[show|list] branches:
+(branches|branch) [show|list]:
   key(ctrl-b)
 
-new repo:
+repo new:
   key(ctrl-n)
 
-clone [repo]:
+repo clone:
   key(ctrl-shift-o)
 
-[show|list] repos:
+(repos|repo) [show|list]:
   key(ctrl-t)
 
-new branch:
+branch new:
   key(ctrl-shift-n)
-
-exit|quite|close:
-  key(alt-f4)

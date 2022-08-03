@@ -1,8 +1,3 @@
-bold [that]:
-  key(ctrl-b)
-
-dot:
-  key(.)
 
 back stab:
   key(shift-tab)
