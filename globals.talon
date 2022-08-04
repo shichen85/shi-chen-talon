@@ -11,5 +11,8 @@
 # key(ctrl-alt-f15): speech.disable()
 mode: all
 -
-wake:
+talon wake:
   speech.enable()
+
+window terminate:
+  key(alt-f4)

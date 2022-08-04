@@ -40,3 +40,24 @@ comment:
   key(f4)
   sleep(100ms)
   key(m)
+
+bookmark one:
+  key(ctrl-shift-1)
+
+bookmark two:
+  key(ctrl-shift-2)
+
+bookmark three:
+  key(ctrl-shift-3)
+
+go to one:
+  key(ctrl-1)
+
+go to two:
+  key(ctrl-2)  
+
+go to three:
+  key(ctrl-3)  
+
+help:
+  key(f1)
