@@ -9,3 +9,7 @@
 # 
 # # Hotkey to sleep Talon (matches hotkey to toggle # Discord)
 # key(ctrl-alt-f15): speech.disable()
+mode: all
+-
+wake:
+  speech.enable()
