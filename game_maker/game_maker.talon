@@ -1,4 +1,7 @@
 app: GameMaker
+app: GameMaker - Beta
+app: GameMaker-Beta
+app: GameMaker Studio 2
 -
 settings(): key_hold = 32
 
@@ -10,6 +13,9 @@ debug:
 
 clean:
   key(ctrl-f7)
+
+compile:
+  key(ctrl-f8)
 
 if:
   key(f4)
@@ -61,3 +67,18 @@ go to three:
 
 help:
   key(f1)
+
+step into:
+  key(f11)
+
+step over:
+  key(f10)
+
+step out:
+  key(shift-f11)
+
+reference:
+  key(f3)
+
+all reference:
+  key(shift-f3)
